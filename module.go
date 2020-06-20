@@ -48,7 +48,6 @@ func (m *Module) Get(key string) string {
 	return value
 }
 
-// *Module GetWithDefault(key string)
 // The same as Get(key string), but it will returns defaultValue instead of empty
 // string when no configuration is saved with that specified key.
 func (m *Module) GetWithDefault(key string, defaultValue string) string {
@@ -59,7 +58,6 @@ func (m *Module) GetWithDefault(key string, defaultValue string) string {
 	return defaultValue
 }
 
-// *Module Set(key string, value string)
 // Set module configuration with specified key to a specified value.
 func (m *Module) Set(key string, value string) {
 	m.Config[key] = value
