@@ -6,7 +6,7 @@
 package config
 
 // Creates a new Config pointer.
-func NewConfig() *Config {
+func New() *Config {
 	return &Config{ Modules: []*Module{} }
 }
 
@@ -18,36 +18,39 @@ type Config struct {
 
 // Appends a module configuration to the Config pointer and returns the Config pointer
 // for chain-able functions call purposes.
-func (c *Config) AppendModule(module *Module) *Config {
-	c.Modules = append(c.Modules, module)
-	return c
+func (config *Config) AppendModule(module *Module) *Config {
+	if config.IsModuleExists(module.Name) {
+		config.DeleteModule(module.Name)
+	}
+	config.Modules = append(config.Modules, module)
+	return config
 }
 
 // Creates a named module configuration, appends it to the Config, and returns the Module
 // pointer.
-func (c *Config) CreateModule(name string) *Module {
-	m := NewModule(name)
-	c.AppendModule(m)
-	return m
+func (config *Config) CreateModule(name string) *Module {
+	module := NewModule(name)
+	config.AppendModule(module)
+	return module
 }
 
 // Deletes a named module configuration from the Config pointer and returns the Config
 // pointer for chain-able functions call purposes.
-func (c *Config) DeleteModule(name string) *Config {
-	for index, moduleConfig := range c.Modules {
+func (config *Config) DeleteModule(name string) *Config {
+	for index, moduleConfig := range config.Modules {
 		if moduleConfig.Name == name {
-			c.Modules[index] = c.Modules[len(c.Modules)-1]
-			c.Modules = c.Modules[:len(c.Modules)-1]
-			return c
+			config.Modules[index] = config.Modules[len(config.Modules)-1]
+			config.Modules = config.Modules[:len(config.Modules)-1]
+			return config
 		}
 	}
-	return c
+	return config
 }
 
 // Checks whether a named module configuration is exists in the Modules slice in the
 // Config pointer. Returns true if the named module is exists, and false otherwise.
-func (c *Config) IsModuleExists(name string) bool {
-	for _, moduleConfig := range c.Modules {
+func (config *Config) IsModuleExists(name string) bool {
+	for _, moduleConfig := range config.Modules {
 		if moduleConfig.Name == name {
 			return true
 		}
@@ -59,11 +62,11 @@ func (c *Config) IsModuleExists(name string) bool {
 // with specified name does not exist in the Config's Modules slice, it will then try to
 // create a new Module with that name, so that the returns value is predicted will not be
 // nil. Returns a Module pointer.
-func (c *Config) OnModule(name string) *Module {
-	for _, moduleConfig := range c.Modules {
+func (config *Config) OnModule(name string) *Module {
+	for _, moduleConfig := range config.Modules {
 		if moduleConfig.Name == name {
 			return moduleConfig
 		}
 	}
-	return c.CreateModule(name)
+	return config.CreateModule(name)
 }
